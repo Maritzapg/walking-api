@@ -35,6 +35,7 @@ SerMascModel.getSerMascs = function (callback) {
     }
 }
 
+//obtiene el informe de servicios de una mascota
 SerMascModel.getInformeMascotaServicios = function (callback) {
     var mascotas = [];
     if (connection) {
@@ -43,7 +44,6 @@ SerMascModel.getInformeMascotaServicios = function (callback) {
             'FROM mascotas mascota, personas persona, razas raza \n' +
             'WHERE mascota.propietarios = persona.id_personas AND mascota.razas=raza.id_razas ORDER BY mascota.id_mascotas', function (error, rows) {
 
-            /*'SELECT * FROM servicios_mascotas ORDER BY fecha_fin', function (error, rows) {*/
             if (error) {
                 throw error;
             }
@@ -68,26 +68,15 @@ SerMascModel.getInformeMascotaServicios = function (callback) {
                         }
                         else {
                             mascotas[i].services = rowsServices
-                            //console.log(mascotas[i])
+                            console.log(mascotas[i])
                         }
                     });
                     }(i));
 
                 }
+                console.log('---------------------------------------------------')
                 console.log(mascotas)
-                /*for(var i = 0; i < mascotas.length; i++)
-                {
-                    for(var j = 0; j < services.length; j++)
-                    {
-                        if(mascotas[i].id === services[j].mascota_id)
-                        {
-                            mascotas[i].services = services[j]
-                            //console.log(rowsServices[j])
 
-                        }
-                    }
-                }*/
-                //console.log(rows);
                 callback(null, mascotas);
             }
         });
