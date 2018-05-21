@@ -1,7 +1,8 @@
 {
   "ExpandedNodes": [
-    ""
+    "",
+    "\\models"
   ],
-  "SelectedNode": "\\package.json",
+  "SelectedNode": "\\models\\mascotamodel.js",
   "PreviewInSolutionExplorer": false
 }

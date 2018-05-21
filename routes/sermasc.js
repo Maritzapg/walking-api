@@ -19,6 +19,18 @@ module.exports = function ()
      });
   });
 
+  //mostramos todos los servicios de mascota agrupados
+    router.get("/informeMascotaServicios", function (req, res)
+    {
+
+        //res.json(200,"LOL");
+        SerMascModel.getInformeMascotaServicios(function (error, data)
+        {
+            //res.json(200, data);
+            res.status(200).json(data);
+        });
+    });
+
   //obtiene un tipo de documento por su id
   router.get("/sermascmodel/:id", function (req, res)
   {

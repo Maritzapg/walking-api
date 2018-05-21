@@ -35,6 +35,65 @@ SerMascModel.getSerMascs = function (callback) {
     }
 }
 
+SerMascModel.getInformeMascotaServicios = function (callback) {
+    var mascotas = [];
+    if (connection) {
+        connection.query('SELECT mascota.id_mascotas AS id, mascota.nombre, concat(persona.primer_nombre,\' \',persona.segundo_nombre,\' \',' +
+            'persona.primer_apellido,\' \', persona.segundo_apellido) AS propietario, raza.nombre AS raza, mascota.sexo \n' +
+            'FROM mascotas mascota, personas persona, razas raza \n' +
+            'WHERE mascota.propietarios = persona.id_personas AND mascota.razas=raza.id_razas ORDER BY mascota.id_mascotas', function (error, rows) {
+
+            /*'SELECT * FROM servicios_mascotas ORDER BY fecha_fin', function (error, rows) {*/
+            if (error) {
+                throw error;
+            }
+            else {
+                //console.log(rows);
+                mascotas = rows;
+                var sqlServices;
+                for(var i = 0; i < mascotas.length; i++)
+                {
+                    (function(i){
+                    sqlServices = 'SELECT servicio_mascota.id_servicios_mascotas AS id, mascota.nombre, ' +
+                        'mascota.id_mascotas as mascota_id, servicio.nombre as servicio, ' +
+                        'servicio_mascota.fecha_inicio, servicio_mascota.fecha_fin \n' +
+                        'FROM servicios_mascotas servicio_mascota, mascotas mascota, servicios servicio \n' +
+                        'WHERE servicio_mascota.mascotas = mascota.id_mascotas AND ' +
+                        'servicio_mascota.servicios = servicio.id_servicios AND ' +
+                        'mascota.id_mascotas = ' + mascotas[i].id;
+
+                    connection.query(sqlServices, function (error, rowsServices) {
+                        if (error) {
+                            throw error;
+                        }
+                        else {
+                            mascotas[i].services = rowsServices
+                            //console.log(mascotas[i])
+                        }
+                    });
+                    }(i));
+
+                }
+                console.log(mascotas)
+                /*for(var i = 0; i < mascotas.length; i++)
+                {
+                    for(var j = 0; j < services.length; j++)
+                    {
+                        if(mascotas[i].id === services[j].mascota_id)
+                        {
+                            mascotas[i].services = services[j]
+                            //console.log(rowsServices[j])
+
+                        }
+                    }
+                }*/
+                //console.log(rows);
+                callback(null, mascotas);
+            }
+        });
+    }
+}
+
 //obtenemos un servicio x mascota por su id
 SerMascModel.getSerMasc = function (id, callback) {
     if (connection) {
