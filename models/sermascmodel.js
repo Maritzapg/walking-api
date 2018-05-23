@@ -37,17 +37,45 @@ SerMascModel.getSerMascs = function (callback) {
 
 //obtiene el informe de servicios de una mascota
 SerMascModel.getInformeMascotaServicios = function (callback) {
-    var mascotas = [];
+
     if (connection) {
-        connection.query('SELECT mascota.id_mascotas AS id, mascota.nombre, concat(persona.primer_nombre,\' \',persona.segundo_nombre,\' \',' +
+
+        connection.query('SELECT  servicios_mascotas.id_servicios_mascotas,\n' +
+            '\tservicios_mascotas.fecha_inicio, \n' +
+            '\tservicios_mascotas.fecha_fin,\n' +
+            '        \n' +
+            '\tmascotas.id_mascotas, \n' +
+            '\tmascotas.nombre, \n' +
+            '        (SELECT nombre\n' +
+            '\t  FROM razas\n' +
+            '          WHERE id_razas = razas) AS raza,\n' +
+            '          mascotas.sexo,\n' +
+            '          \n' +
+            '        tipo_documentos.tipo_documento,\n' +
+            '        personas.numero_documento, \n' +
+            '        concat(personas.primer_nombre,\' \',personas.segundo_nombre,\' \',' +
+            '        personas.primer_apellido,\' \', personas.segundo_apellido) AS propietario, \n' +
+            '         \n' +
+            '        servicios.nombre as servicio,\n' +
+            '        servicios.costo, \n' +
+            '        servicios.descripcion\n' +
+            '\n' +
+            'FROM servicios_mascotas \n' +
+            '\tINNER JOIN (mascotas\n' +
+            '        \tINNER JOIN (personas\n' +
+            '\t\t\tINNER JOIN tipo_documentos ON personas.tipo_documento = tipo_documentos.id_tipo_documentos) ON mascotas.propietarios = personas.id_personas) ON servicios_mascotas.mascotas = mascotas.id_mascotas\n' +
+            '        INNER JOIN servicios ON servicios.id_servicios = servicios_mascotas.servicios', function (error, rows) {
+
+        /*connection.query('SELECT mascota.id_mascotas AS id, mascota.nombre, concat(persona.primer_nombre,\' \',persona.segundo_nombre,\' \',' +
             'persona.primer_apellido,\' \', persona.segundo_apellido) AS propietario, raza.nombre AS raza, mascota.sexo \n' +
             'FROM mascotas mascota, personas persona, razas raza \n' +
             'WHERE mascota.propietarios = persona.id_personas AND mascota.razas=raza.id_razas ORDER BY mascota.id_mascotas', function (error, rows) {
-
+*/
             if (error) {
                 throw error;
             }
             else {
+                /*var mascotas = [];
                 //console.log(rows);
                 mascotas = rows;
                 var sqlServices;
@@ -72,12 +100,10 @@ SerMascModel.getInformeMascotaServicios = function (callback) {
                         }
                     });
                     }(i));
-
                 }
                 console.log('---------------------------------------------------')
-                console.log(mascotas)
-
-                callback(null, mascotas);
+                console.log(mascotas)*/
+                callback(null, rows);
             }
         });
     }
