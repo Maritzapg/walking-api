@@ -18,7 +18,7 @@ var MascotaModel = {};
 //Obtiene todas las mascotas
 MascotaModel.getMascotas = function (callback) {
     if (connection) {
-        connection.query('SELECT mascota.id_mascotas AS id, mascota.nombre, concat(persona.primer_nombre,\' \',persona.segundo_nombre,\' \',' +
+        connection.query('SELECT mascota.id_mascotas AS id, mascota.nombre, persona.id_personas as id_propietario, concat(persona.primer_nombre,\' \',persona.segundo_nombre,\' \',' +
             'persona.primer_apellido,\' \', persona.segundo_apellido) AS propietario, raza.nombre AS raza, mascota.sexo \n' +
             'FROM mascotas mascota, personas persona, razas raza \n' +
             'WHERE mascota.propietarios = persona.id_personas AND mascota.razas=raza.id_razas ORDER BY mascota.id_mascotas', function (error, rows) {
@@ -38,7 +38,7 @@ MascotaModel.getMascotas = function (callback) {
 //obtiene una mascota dado su id
 MascotaModel.getMascota = function (id, callback) {
     if (connection) {
-        var sql = 'SELECT mascota.id_mascotas AS id, mascota.nombre, concat(persona.primer_nombre,\' \',persona.segundo_nombre,\' \',' +
+        var sql = 'SELECT mascota.id_mascotas AS id, mascota.nombre, persona.id_personas as id_propietario, concat(persona.primer_nombre,\' \',persona.segundo_nombre,\' \',' +
             'persona.primer_apellido,\' \', persona.segundo_apellido) AS propietario, raza.nombre AS raza, mascota.sexo \n' +
             'FROM mascotas mascota, personas persona, razas raza \n' +
             'WHERE mascota.propietarios = persona.id_personas AND mascota.razas=raza.id_razas AND mascota.id_mascotas = ' + connection.escape(id);

@@ -36,7 +36,7 @@ SerMascModel.getSerMascs = function (callback) {
 }
 
 //obtiene el informe de servicios de una mascota
-SerMascModel.getInformeMascotaServicios = function (callback) {
+SerMascModel.getInformeMascotasServicios = function (callback) {
 
     if (connection) {
 
@@ -104,6 +104,48 @@ SerMascModel.getInformeMascotaServicios = function (callback) {
                 console.log('---------------------------------------------------')
                 console.log(mascotas)*/
                 callback(null, rows);
+            }
+        });
+    }
+}
+
+//obtenemos un servicio x mascota por su id
+SerMascModel.getInformeMascotaServicios = function (id, callback) {
+    if (connection) {
+        var sql = 'SELECT  servicios_mascotas.id_servicios_mascotas,\n' +
+            '\tservicios_mascotas.fecha_inicio, \n' +
+            '\tservicios_mascotas.fecha_fin,\n' +
+            '        \n' +
+            '\tmascotas.id_mascotas, \n' +
+            '\tmascotas.nombre, \n' +
+            '        (SELECT nombre\n' +
+            '\t  FROM razas\n' +
+            '          WHERE id_razas = razas) AS raza,\n' +
+            '          mascotas.sexo,\n' +
+            '          \n' +
+            '        tipo_documentos.tipo_documento,\n' +
+            '        personas.numero_documento, \n' +
+            '        concat(personas.primer_nombre,\' \',personas.segundo_nombre,\' \',' +
+            '        personas.primer_apellido,\' \', personas.segundo_apellido) AS propietario, \n' +
+            '         \n' +
+            '        servicios.nombre as servicio,\n' +
+            '        servicios.costo, \n' +
+            '        servicios.descripcion\n' +
+            '\n' +
+            'FROM servicios_mascotas \n' +
+            '\tINNER JOIN (mascotas\n' +
+            '        \tINNER JOIN (personas\n' +
+            '\t\t\tINNER JOIN tipo_documentos ON personas.tipo_documento = tipo_documentos.id_tipo_documentos) ON mascotas.propietarios = personas.id_personas) ON servicios_mascotas.mascotas = mascotas.id_mascotas\n' +
+            '        INNER JOIN servicios ON servicios.id_servicios = servicios_mascotas.servicios WHERE mascotas.id_mascotas = '+ connection.escape(id);
+
+        /*'SELECT * FROM servicios_mascotas WHERE id_servicios_mascotas = ' + connection.escape(id);*/
+
+        connection.query(sql, function (error, row) {
+            if (error) {
+                throw error;
+            }
+            else {
+                callback(null, row);
             }
         });
     }

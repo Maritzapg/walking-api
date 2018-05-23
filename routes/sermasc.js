@@ -20,15 +20,46 @@ module.exports = function ()
   });
 
   //mostramos todos los servicios de mascota agrupados
-    router.get("/informeMascotaServicios", function (req, res)
+    router.get("/informeMascotasServicios", function (req, res)
     {
 
         //res.json(200,"LOL");
-        SerMascModel.getInformeMascotaServicios(function (error, data)
+        SerMascModel.getInformeMascotasServicios(function (error, data)
         {
             //res.json(200, data);
             res.status(200).json(data);
         });
+    });
+
+    //obtiene los servicios de mascota por id de mascota
+    router.get("/informeMascotasServicios/:id", function (req, res)
+    {
+        //id del tipo de documento
+        var id = req.params.id;
+        //solo actualizamos si la id es un número
+        if (!isNaN(id))
+        {
+            SerMascModel.getInformeMascotaServicios(id, function (error, data)
+            {
+                //si el tipo de documento existe lo mostramos en formato json
+                if (typeof data !== 'undefined' && data.length > 0)
+                {
+                    //res.json(200, data);
+                    res.status(200).json(data)
+                }
+                //en otro caso mostramos una respuesta conforme no existe
+                else
+                {
+                    //res.json(404, { "msg": "notExist" });
+                    res.status(404).json({ "msg": "notExist" })
+                }
+            });
+        }
+        else //si hay algún error
+        {
+            //res.json(500, { "msg": "Error" });
+            res.status(500).json({ "msg": "Error" })
+        }
     });
 
   //obtiene un tipo de documento por su id
